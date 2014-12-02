@@ -9,4 +9,9 @@ Install vendors with composer:
 composer install
 ~~~
 
-Uncomment the lines starting with /*********** CREATE ADMIN in index.php to add the admin account (admin@admin) and then remove them
+Uncomment the lines starting with
+~~~
+/*********** CREATE ADMIN
+~~~
+
+in `public/index.php` to add the admin account (admin@admin) and then remove them
