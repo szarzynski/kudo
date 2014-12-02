@@ -13,7 +13,7 @@ require_once '../app/rb.php';
 
 $config = array(
     'dbhost' => 'localhost',
-    'dbname' => 'bezposrednio',
+    'dbname' => 'kudo',
     'dbuser' => 'root',
     'dbpass' => '',
     'debug' => false,
@@ -81,26 +81,14 @@ use JeremyKendall\Slim\Auth\Adapter\Db\PdoAdapter;
 use JeremyKendall\Slim\Auth\Bootstrap;
 
 $validator = new PasswordValidator();
-$adapter = new PdoAdapter(getDb(), 'kudo_users', 'username', 'pass', $validator);
+$adapter = new PdoAdapter(getDb($config), 'kudo_users', 'username', 'pass', $validator);
 $acl = new \Auth\Acl();
 $authBootstrap = new Bootstrap($app, $adapter, $acl);
 $authBootstrap->bootstrap();
 
 $app->add(new \Slim\Middleware\SessionCookie());
 
-function close_db_connection()
-{
-    R::close();
-}
-
-register_shutdown_function('close_db_connection');
-
-function getDb() {
-    $config = array(
-    'dbhost' => 'localhost',
-    'dbname' => 'bezposrednio',
-    'dbuser' => 'root',
-    'dbpass' => '');
+function getDb(&$config) {
 
     $options = array(
         \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
@@ -113,18 +101,31 @@ function getDb() {
         die(sprintf('DB connection error: %s', $e->getMessage()));
     }
 
-    /* SETUP ADMIN
-    $admin = 'INSERT INTO kudo_users (username, pass, role) '
-    . "VALUES ('apptelli', :pass, 'admin')";
+	/*********** CREATE ADMIN
+    $admin = 'CREATE TABLE IF NOT EXISTS `kudo_users` (
+	`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+	`username` varchar(50) CHARACTER SET latin1 NOT NULL,
+	`role` varchar(50) CHARACTER SET latin1 NOT NULL,
+	`pass` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+	PRIMARY KEY (`id`) ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+	INSERT INTO kudo_users (username, pass, role) '
+    . "VALUES ('admin', :pass, 'admin')";
     try {
         $admin = $db->prepare($admin);
-        $admin->execute(array('pass' => password_hash('[1qaz2wsx3edc]', PASSWORD_DEFAULT)));
+        $admin->execute(array('pass' => password_hash('admin', PASSWORD_DEFAULT)));
     } catch (\PDOException $e) {
         die(sprintf('DB setup error: %s', $e->getMessage()));
     } */
     
     return $db;
 }
+
+function close_db_connection()
+{
+    R::close();
+}
+
+register_shutdown_function('close_db_connection');
 
 loadModules($app);
 
