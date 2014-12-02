@@ -1,0 +1,10 @@
+{
+    "require": {
+        "slim/slim": "2.*",
+		"slim/views": "0.1.*",
+		"twig/twig": "1.*",
+		"jeremykendall/slim-auth": "dev-master",
+		"itsgoingd/slim-facades": "dev-master",
+		"respect/validation": "0.7.*@dev"
+    }
+}
